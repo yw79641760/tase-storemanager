@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softsec.tase.store.dao.File">
+	<insert id="insertBundleChecksum" parameterType="map" statementType="STATEMENT">
+		insert	into	${tableName} 	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="appId				!= 0">		app_id,					</if>
+				<if test="bundleChecksum	!= null">	bundle_checksum,		</if>
+				<if test="bundleMagicNumber	!= null">	bundle_magic_number,	</if>
+			</trim>
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="appId				!= 0">		'${appId}',				</if>
+				<if test="bundleChecksum	!= null">	'${bundleChecksum}',	</if>
+				<if test="bundleMagicNumber	!= null">	'${bundleMagicNumber}',	</if>
+			</trim>
+		)
+	</insert>
+	<insert id="insertBundleResource" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+		insert	into	${tableName}	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="bundleChecksum	!= null">	bundle_checksum,	</if>
+				<if test="filePath			!= null">	file_path,			</if>
+			</trim>
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="bundleChecksum	!= null">	'${bundleChecksum}',</if>
+				<if test="filePath			!= null">	'${filePath}',		</if>
+			</trim>		
+		)
+	</insert>
+	<insert id="insertBundleStatus" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+		insert	into	${tableName}	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="bundleChecksum	!= null">	bundle_checksum,	</if>
+				<if test="staticStatus		!= 0">		static_status,		</if>
+				<if test="dynamicStatus		!= 0">		dynamic_status,		</if>
+			</trim>
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="bundleChecksum	!= null">	'${bundleChecksum}',</if>
+				<if test="staticStatus		!= 0">		'${staticStatus}',	</if>
+				<if test="dynamicStatus		!= 0">		'${dynamicStatus}',	</if>
+			</trim>
+		)
+	</insert>
+	<insert id="insertFileAntivirus" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+		insert	into	${tableName}	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum		!= null">	file_checksum,			</if>
+				<if test="antivirusVendor	!= null">	antivirus_vendor,		</if>
+				<if test="antivirusUrl		!= null">	antivirus_url,			</if>
+				<if test="antivirusEmail	!= null">	antivirus_email,		</if>
+				<if test="scanningTime		!= 0">		scanning_time,			</if>
+				<if test="maliciousType		!= null">	malicious_type,			</if>
+				<if test="antivirusResult	!= null">	antivirus_result,		</if>
+			</trim>
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum		!= null">	'${fileChecksum}',		</if>
+				<if test="antivirusVendor	!= null">	'${antivirusVendor}',	</if>
+				<if test="antivirusUrl		!= null">	'${antivirusUrl}',		</if>
+				<if test="antivirusEmail	!= null">	'${antivirusEmail}',	</if>
+				<if test="scanningTime		!= 0">		'${scanningTime}',		</if>
+				<if test="maliciousType		!= null">	'${maliciousType}',		</if>
+				<if test="antivirusResult	!= null">	'${antivirusResult}',	</if>
+			</trim>
+		)
+	</insert>
+	<insert id="insertFileAndroidApkManifest" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_file_android_apk_manifest 	(
+        	file_checksum,
+        	xmlns,
+        	package_name,
+        	shared_user_id,
+        	shared_user_label,
+        	version_code,
+        	version_name,
+        	install_location
+        ) values (
+        	#{fileChecksum,					jdbcType=CHAR},
+        	#{apkManifest.xmlns,			jdbcType=VARCHAR},
+        	#{apkManifest.packageName,		jdbcType=VARCHAR},
+        	#{apkManifest.sharedUserId,		jdbcType=VARCHAR},
+        	#{apkManifest.sharedUserLabel,	jdbcType=VARCHAR},
+        	#{apkManifest.versionCode,		jdbcType=BIGINT},
+        	#{apkManifest.versionName,		jdbcType=VARCHAR},
+        	#{apkManifest.installLocation,	jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertFileAndroidApkManifestActivity" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    	insert	into	tase_file_android_apk_manifest_activity	(
+    		file_checksum,
+    		activity_name
+    	)	values
+    	<foreach collection="apkActivityList" item="apkActivity" open="(" separator="),(" close=")">
+    		#{fileChecksum,					jdbcType=CHAR},
+    		#{apkActivity.activityName,		jdbcType=VARCHAR}
+    	</foreach>
+    </insert>
+    <insert id="insertFileAndroidApkManifestIntentFilterAction" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    	insert	into	tase_file_android_apk_manifest_intent_filter_action	(
+    		file_checksum,
+    		action_name
+    	)	values
+    	<foreach collection="apkIntentFilterActionList" item="apkIntentFilterAction" open="(" separator="),(" close=")">
+    		#{fileChecksum,							jdbcType=CHAR},
+    		#{apkIntentFilterAction.actionName,		jdbcType=VARCHAR}
+    	</foreach>
+    </insert>
+    <insert id="insertFileAndroidApkManifestPermission" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    	insert	into	tase_file_android_apk_manifest_permission	(
+    		file_checksum,
+    		permission_name,
+    		protection_level
+    	)	values
+    	<foreach collection="apkPermissionList" item="apkPermission" open="(" separator="),(" close=")">
+    		#{fileChecksum, 					jdbcType=CHAR},
+    		#{apkPermission.permissionName, 	jdbcType=VARCHAR},
+    		#{apkPermission.protectionLevel, 	jdbcType=VARCHAR}
+    	</foreach>
+    </insert>
+    <insert id="insertFileAndroidApkManifestUsesSdk" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    	insert	into	tase_file_android_apk_manifest_uses_sdk	(
+    		file_checksum,
+    		min_sdk_version,
+    		target_sdk_version,
+    		max_sdk_version
+    	)	values	(
+    		#{fileChecksum,					jdbcType=CHAR},
+			#{apkUsesSdk.minSdkVersion,		jdbcType=INTEGER},
+			#{apkUsesSdk.targetSdkVersion, 	jdbcType=INTEGER},
+			#{apkUsesSdk.maxSdkVersion, 	jdbcType=INTEGER}   	
+    	)
+    </insert>
+    <insert id="insertFileAndroidApkManifestUsesFeature" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    	insert	into	tase_file_android_apk_manifest_uses_feature	(
+			file_checksum,
+			feature_name,
+			required,
+			gl_es_version
+    	)	values
+    	<foreach collection="apkUsesFeatureList" item="apkUsesFeature" open="(" separator="),(" close=")">
+    		#{fileChecksum,					jdbcType=CHAR},
+			#{apkUsesFeature.featureName,	jdbcType=VARCHAR},
+			#{apkUsesFeature.required,		jdbcType=INTEGER},
+			#{apkUsesFeature.glEsVersion,	jdbcType=VARCHAR}    	
+    	</foreach>
+    </insert>
+    <insert id="insertFileAndroidApkManifestUsesLibrary" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    	insert	into	tase_file_android_apk_manifest_uses_library	(
+    		file_checksum,
+    		library_name,
+    		required
+    	)	values
+    	<foreach collection="apkUsesLibraryList" item="apkUsesLibrary" open="(" separator="),(" close=")">
+    		#{fileChecksum,					jdbcType=CHAR},
+    		#{apkUsesLibrary.libraryName,	jdbcType=VARCHAR},
+    		#{apkUsesLibrary.required,		jdbcType=INTEGER}
+    	</foreach>
+    </insert>
+    <insert id="insertFileAndroidApkManifestUsesPermission" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    	insert	into	tase_file_android_apk_manifest_uses_permission	(
+    		file_checksum,
+    		uses_permission_name
+    	)	values
+    	<foreach collection="apkUsesPermissionList" item="apkUsesPermission" open="(" separator="),(" close=")">
+    		#{fileChecksum,							jdbcType=CHAR},
+    		#{apkUsesPermission.usesPermissionName,	jdbcType=VARCHAR}
+    	</foreach>
+    </insert>
+    <insert id="insertFileAndroidApkSignature" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    	insert	into	tase_file_android_apk_signature	(
+			file_checksum,
+			certificate_type,
+			public_key_modulus,
+			public_key_exponent,
+			algorithm,
+			certificate_hashcode
+    	)	values	(
+			#{fileChecksum,						jdbcType=CHAR},
+			#{apkSignature.certificateType,		jdbcType=VARCHAR},
+			#{apkSignature.publicKeyModulus, 	jdbcType=VARCHAR},
+			#{apkSignature.publicKeyExponent, 	jdbcType=BIGINT},
+			#{apkSignature.algorithm,			jdbcType=VARCHAR},
+			#{apkSignature.certificateHashCode,	jdbcType=BIGINT}
+    	)
+    </insert>
+    <insert id="insertFileChecksum" parameterType="map" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="appId			!= 0">		app_id,				</if>
+    			<if test="fileChecksum	!= null">	file_checksum,		</if>
+    		</trim>
+    	)	values	(
+     		<trim suffix="" suffixOverrides=",">
+    			<if test="appId			!= 0">		'${appId}',			</if>
+    			<if test="fileChecksum	!= null">	'${fileChecksum}',	</if>
+    		</trim>   	
+    	)
+    </insert>
+    <insert id="insertFileLabel" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="fileChecksum		!= null">	file_checksum,		</if>
+    			<if test="hasVirus			!= 0">		has_virus,			</if>
+    		</trim>
+    	)	values	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="fileChecksum		!= null">	'${fileChecksum}',	</if>
+    			<if test="hasVirus			!= 0">		'${hasVirus}',		</if>
+    		</trim>    	
+    	)
+    </insert>
+    <insert id="insertFileLogoChecksum" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="appId			!= 0">		app_id,				</if>
+    			<if test="fileChecksum	!= null">	file_checksum,		</if>
+    		</trim>
+    	)	values	(
+     		<trim suffix="" suffixOverrides=",">
+    			<if test="appId			!= 0">		'${appId}',			</if>
+    			<if test="fileChecksum	!= null">	'${fileChecksum}',	</if>
+    		</trim>   	
+    	)
+    </insert>
+    <insert id="insertFileLogoResource" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="logoChecksum		!= null">	logo_checksum,		</if>
+    			<if test="logoPath			!= null">	logo_path,			</if>
+    		</trim> 
+    	)	values	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="logoChecksum		!= null">	'${logoChecksum}',	</if>
+    			<if test="logoPath			!= null">	'${logoPath}',		</if>
+    		</trim>   	
+    	)
+    </insert>
+    <insert id="insertFileMetadata" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="fileMetadata.fileChecksum		!= null">	file_checksum,					</if>
+    			<if test="bundleChecksum				!= null">	bundle_checksum,				</if>
+    			<if test="fileMetadata.fileName			!= null">	file_name,						</if>
+    			<if test="fileMetadata.extension		!= null">	extension,						</if>
+    			<if test="fileMetadata.length			!= 0">		length,							</if>
+    			<if test="fileMetadata.createdTime		!= 0">		created_time,					</if>
+    			<if test="fileMetadata.modifiedTime		!= 0">		modified_time,					</if>
+    		</trim>
+    	)	values	(
+    	    <trim suffix="" suffixOverrides=",">
+    			<if test="fileMetadata.fileChecksum 	!= null">	'${fileMetadata.fileChecksum}',	</if>
+    			<if test="bundleChecksum				!= null">	'${bundleChecksum}',			</if>
+    			<if test="fileMetadata.fileName			!= null">	'${fileMetadata.fileName}',		</if>
+    			<if test="fileMetadata.extension		!= null">	'${fileMetadata.extension}',	</if>
+    			<if test="fileMetadata.length			!= 0">		'${fileMetadata.length}',		</if>
+    			<if test="fileMetadata.createdTime		!= 0">		'${fileMetadata.createdTime}',	</if>
+    			<if test="fileMetadata.modifiedTime		!= 0">		'${fileMetadata.modifiedTime}',	</if>
+    		</trim>
+    	)
+    </insert>
+    <insert id="insertFileResource" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="fileChecksum		!= null">	file_checksum,		</if>
+    			<if test="filePath			!= null">	file_path,			</if>
+    		</trim>
+    	)	values	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="fileChecksum		!= null">	'${fileChecksum}',	</if>
+    			<if test="filePath			!= null">	'${filePath}',		</if>
+    		</trim>    	
+    	)
+    </insert>
+   	<insert id="insertFileSnapshotChecksum" parameterType="map" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		app_id,
+    		snapshot_checksum
+    	)	values
+		<foreach collection="snapshotMetadataList" item="snapshotMetadata" open="(" separator="),(" close=")">
+			'${appId}',
+			'${snapshotMetadata.fileChecksum}'
+		</foreach>   	
+    </insert>
+    <insert id="insertFileSnapshotResource" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		snapshot_checksum,
+    		snapshot_path
+    	)	values
+    	<foreach collection="snapshotMetadataList" item="snapshotMetadata" open="(" separator="),(" close=")">
+    		'${snapshotMetadata.fileChecksum}',
+    		'${snapshotMetadata.filePath}'
+    	</foreach>
+    </insert>
+    <insert id="insertFileStatus" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="fileChecksum		!= null">	file_checksum,		</if>
+    			<if test="staticStatus		!= 0">		static_status,		</if>
+    			<if test="dynamicStatus		!= 0">		dynamic_status,		</if>
+    		</trim>
+    	)	values	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="fileChecksum		!= null">	'${fileChecksum}',	</if>
+    			<if test="staticStatus		!= 0">		'${staticStatus}',	</if>
+    			<if test="dynamicStatus		!= 0">		'${dynamicStatus}',	</if>
+    		</trim>    		
+    	)
+    </insert>
+    <select id="selectBundleChecksum" parameterType="map" resultType="string" statementType="STATEMENT">
+    	select	bundle_checksum
+    	from	${tableName}
+    	where	bundle_checksum		=	'${bundleChecksum}'
+    </select>
+    <select id="selectFileChecksum" parameterType="map" resultType="string" statementType="STATEMENT">
+		select	file_checksum
+		from	${tableName}
+		where	file_checksum		=	'${fileChecksum}'
+    </select>
+    <sql id="selectStaticUncheckedBundlePath">
+		select			file_path								as	filePath
+		from			tase_bundle_resource
+		left outer join	tase_bundle_checksum
+		on 				tase_bundle_checksum.bundle_checksum	=	tase_bundle_resource.bundle_checksum
+		left outer join tase_bundle_status
+		on				tase_bundle_status.bundle_checksum		= 	tase_bundle_checksum.bundle_checksum
+		and				tase_bundle_status.static_status		= 	0
+		left outer join	tase_app_status
+		on 				tase_bundle_checksum.app_id 			= 	tase_app_status.app_id
+		and 			tase_app_status.is_file_downloaded 		= 	1
+    </sql>
+    <select id="selectStaticUncheckedBundlePathAutomatically" resultType="string">
+    	<include refid="selectStaticUncheckedBundlePath"/>
+    </select>
+    <select id="selectStaticUncheckedBundlePathManually" parameterType="list" resultType="string">
+    	<include refid="selectStaticUncheckedBundlePath"/>
+    	where			tase_app_status.app_id	in
+    	<foreach collection="list" item="appId" open="(" separator="," close=")">#{appId}</foreach>
+    </select>
+    <sql id="selectStaticUncheckedAppPath">
+    	select			file_path								as filePath
+    	from			tase_file_resource
+    	left outer join	tase_file_checksum
+    	on				tase_file_checksum.file_checksum		=	tase_file_resource.file_checksum
+    	left outer join tase_file_status
+    	on				tase_file_status.sat		
+    </sql>
+    <update id="updateBundleStatus" parameterType="map" statementType="STATEMENT">
+    	update	${tableName}
+    	set
+    	<trim suffix="" suffixOverrides=",">
+    		<if test="staticStatus	!= 0">
+    			static_status	=	'${staticStatus}',
+    		</if>
+    		<if test="dynamicStatus	!= 0">
+    			dynamic_status	=	'${dynamicStatus}',
+    		</if>
+    	</trim>
+    	where	bundle_checksum	=	'${bundleChecksum}'
+    </update>
+    <update id="updateFileStatus" parameterType="map" statementType="STATEMENT">
+    	update	${tableName}
+    	set
+    	<trim suffix="" suffixOverrides=",">
+    		<if test="staticStatus	!= 0">
+    			static_status	=	'${staticStatus}',
+    		</if>
+   			<if test="dynamicStatus	!= 0">
+    			dynamic_status	=	'${dynamicStatus}',
+    		</if>
+    	</trim>
+    	where	file_checksum	=	'${fileChecksum}'
+    </update>
+    <select id="selectBundleChecksumByFileStatus" parameterType="map" resultType="string" statementType="STATEMENT">
+		select	bc.bundle_checksum as bundleChecksum,
+				fm.file_checksum as fileChecksum
+		from	${bundleChecksumTableName}	bc,
+				${fileMetadataTableName}	fm,
+				${fileStatusTableName}		fs
+		where	bc.bundle_checksum 		=	fm.bundle_checksum
+		and		fm.file_checksum		=	fs.file_checksum
+		and		fs.static_status		=	'${staticStatus}'
+		and		fs.dynamic_status		=	'${dynamicStatus}'
+    </select>
+    <select id="selectFileChecksumByBundleChecksum" parameterType="map" resultType="string" statementType="STATEMENT">
+    	select	file_checksum
+    	from	${tableName}
+    	where	bundle_checksum			= 	'${bundleChecksum}'
+    </select>
+    <update id="updateFileStatusByFileChecksum" parameterType="map" statementType="STATEMENT">
+    	update	${tableName}
+    	set
+    	<trim suffix="" suffixOverrides=",">
+    		<if test="staticStatus	!= 0">
+    			static_status			=	'${staticStatus}',
+    		</if>
+    		<if test="dynamicStatus	!= 0">
+    			dynamic_status			= 	'${dynamicStatus}',
+    		</if>
+    	</trim>
+    	where	file_checksum	in
+    	<foreach collection="fileChecksumList" item="fileChecksum" open="(" separator="," close=")">'${fileChecksum}'</foreach>
+    </update>
+</mapper>

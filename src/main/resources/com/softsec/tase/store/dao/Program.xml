@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softsec.tase.store.dao.Program">
+    <select id="selectProgramIdByScriptMd5OrExecutableMd5" parameterType="map" resultType="long">
+        select	program_id
+        from	tase_program_storage
+        where	script_md5 = #{scriptMd5} 
+       	or		executable_md5 = #{executableMd5}
+    </select>
+    <insert id="insertBasic" parameterType="program">
+        insert into	tase_program_basic ( 
+        		program_id,
+		        program_name,
+		        program_type,
+		        script_name,
+		        executable_name,
+		        register_time
+		) values (
+				#{programId},
+        		#{programName},
+        		#{programType}
+        		#{scriptName},
+        		#{executableName},
+        		#{registerTime}
+        )
+    </insert>
+    <insert id="insertEnv" parameterType="map">
+        insert into tase_program_env (
+        		program_id,
+        		env_name,
+        		env_value
+        ) values (
+        		#{programId},
+        		#{envName},
+        		#{envValue}
+        )
+    </insert>
+    <insert id="insertStorage" parameterType="program">
+        insert into tase_program_storage ( 
+       			program_id,
+        		script_path,
+        		script_md5,
+        		executable_path,
+        		executable_md5
+       	) values (
+       			#{programId},
+        		#{scriptPath},
+        		#{scriptMd5},
+        		#{executablePath},
+        		#{executableMd5}
+        )
+    </insert>
+    <select id="selectCountByProgramType" parameterType="int" resultType="int">
+        select	count(program_count)
+        from	tase_program_type
+        where	program_type = #{programType}
+    </select>
+    <update id="updateProgramCount" parameterType="int">
+        update	tase_program_type
+        set		program_count = program_count + 1
+        where	program_type = #{programType}
+    </update>
+    <insert id="insertProgramType" parameterType="int">
+        insert into tase_program_type ( 
+        		program_type)
+        values (
+       			#{programType}
+       	)
+    </insert>
+    <select id="selectProgramsByProgramType" parameterType="int" resultType="program">
+        select	program_id as programId,
+        		program_name as programName,
+        		program_type as programType,
+        		register_time as registerTime
+        from	tase_program_basic
+        where	program_type = #{value}
+    </select>
+    <select id="selectLatestProgramIdByProgramType" parameterType="int" resultType="long">
+        select	program_id
+        from	tase_program_basic
+        where	program_type = #{value}
+        order
+        by		register_time DESC
+    </select>
+    <select id="selectAllProgramType" resultType="programTypeItem">
+        select	program_type as programType,
+        		program_count as programCount
+        from	tase_program_type
+    </select>
+    <select id="selectAllProgramItem" resultType="programItem">
+        select	tase_program_basic.program_id as programId,
+        		tase_program_basic.program_name as programName,
+        		tase_program_basic.node_type as nodeType,
+        		tase_program_storage.script_name as scriptName,
+        		tase_program_storage.script_path as scriptPath,
+        		tase_program_storage.script_md5 as scriptMd5,
+        		tase_program_storage.executable_name as executableName,
+        		tase_program_storage.executable_path as executablePath,
+        		tase_program_storage.executable_md5 as executableMd5,
+        		tase_program_storage.env_variables as envVariables
+        from	tase_program_basic,
+        		tase_program_storage
+        where	tase_program_basic.program_id = tase_program_storage.program_id
+    </select>
+    <select id="selectProgramItemByProgramId" parameterType="long" resultType="programItem">
+        select	tase_program_basic.program_id as programId,
+        		tase_program_basic.program_name as programName,
+        		tase_program_basic.node_type as nodeType,
+        		tase_program_storage.script_name as scriptName,
+        		tase_program_storage.script_path as scriptPath,
+        		tase_program_storage.script_md5 as scriptMd5,
+        		tase_program_storage.executable_name as executableName,
+        		tase_program_storage.executable_path as executablePath,
+        		tase_program_storage.executable_md5 as executableMd5,
+        		tase_program_storage.env_variables as envVariables
+        from	tase_program_basic,
+        		tase_program_storage
+        where	tase_program_basic.program_id = tase_program_storage.program_id
+        and		tase_program_basic.program_id = #{value}
+    </select>
+</mapper>

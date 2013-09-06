@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+	   	<setting name="cacheEnabled" 		value="true" />
+		<setting name="lazyLoadingEnabled" 	value="false" />
+	</settings>
+	<typeAliases>
+	    <package name="com.softsec.tase.common.domain"/>
+	    <package name="com.softsec.tase.common.domain.app"/>
+	    <package name="com.softsec.tase.common.domain.auth"/>
+	    <package name="com.softsec.tase.common.domain.result"/>
+	    <package name="com.softsec.tase.common.domain.rule"/>
+	    <package name="com.softsec.tase.common.domain.schedule"/>
+	    <package name="com.softsec.tase.common.dto.app"/>
+	    <package name="com.softsec.tase.common.dto.app.apk"/>
+	    <package name="com.softsec.tase.common.dto.app.ipa"/>
+	    <package name="com.softsec.tase.common.rpc.domain.app"/>
+	    <package name="com.softsec.tase.common.rpc.domain.container"/>
+	    <package name="com.softsec.tase.common.rpc.domain.job"/>
+	    <package name="com.softsec.tase.common.rpc.domain.node"/>
+	    <package name="com.softsec.tase.common.rpc.domain.user"/>
+	    <package name="com.softsec.tase.store.domain"/>
+	</typeAliases>
+	<environments default="product">
+		<environment id="product">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+			    <!-- connection setting -->
+				<property name="driver"		value="${jdbc.driver}" />
+				<property name="url"		value="${jdbc.url}" />
+				<property name="username" 	value="${jdbc.username}" />
+				<property name="password" 	value="${jdbc.password}" />
+				<!-- pool setting -->
+				<property name="poolMaximumActiveConnections"	value="${poolMaximumActiveConnections}" />
+				<property name="poolMaximumIdleConnections" 	value="${poolMaximumIdleConnections}" />
+				<property name="poolMaximumCheckoutTime" 		value="${poolMaximumCheckoutTime}" />
+				<property name="poolTimeToWait" 				value="${poolTimeToWait}"/>  
+                <property name="poolPingQuery" 					value="${poolPingQuery}"/>  
+                <property name="poolPingEnabled" 				value="${poolPingEnabled}"/>  
+                <property name="poolPingConnectionsNotUsedFor" 	value="${poolPingConnectionsNotUsedFor}"/>  
+			</dataSource>
+		</environment>
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" 	value="${jdbc.driver}" />
+				<property name="url" 		value="${jdbc.url}" />
+				<property name="username" 	value="${jdbc.username}" />
+				<property name="password" 	value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+	    <mapper resource="com/softsec/tase/store/dao/App.xml" />
+	    <mapper resource="com/softsec/tase/store/dao/File.xml" />
+		<mapper resource="com/softsec/tase/store/dao/Job.xml" />
+		<mapper resource="com/softsec/tase/store/dao/Node.xml" />
+		<mapper resource="com/softsec/tase/store/dao/Order.xml" />
+		<mapper resource="com/softsec/tase/store/dao/Program.xml" />
+		<mapper resource="com/softsec/tase/store/dao/Task.xml" />
+		<mapper resource="com/softsec/tase/store/dao/User.xml" />
+	</mappers>
+</configuration>

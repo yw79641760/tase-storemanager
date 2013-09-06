@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softsec.tase.store.dao.User">
+	<select id="selectUserIdByUsername" resultType="int">
+	    select	user_id
+	    from	tase_user_basic
+	    where	username = #{username}
+	</select>
+	<insert id="insertUser" parameterType="map">
+	    insert into tase_user_basic (
+	    		username,
+	    		password
+	    ) values (
+	    		#{username},
+	    		#{password}
+	    )
+	</insert>
+	<select id="selectAllUsers" resultType="User">
+	    select	user_id as userId,
+	    		username
+	   	from	tase_user_basic
+	</select>
+</mapper>

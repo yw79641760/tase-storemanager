@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softsec.tase.store.dao.Order">
+	<insert id="insertOrderAndJob" parameterType="map">
+		insert	into	tase_order_job	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="orderId	!=	null">	order_id,	</if>
+				<if test="jobId		!=	0">		job_id,		</if>
+			</trim>
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="orderId	!=	null">	#{orderId},	</if>
+				<if test="jobId		!=	0">		#{jobId},	</if>
+			</trim>
+		)
+	</insert>
+	<insert id="insertInputApkManifest" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+		insert	into	tase_order_file_android_apk_manifest	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum					!=	null">	file_checksum,					</if>
+				<if test="apkManifest.xmlns				!=	null">	xmlns,							</if>
+				<if test="apkManifest.packageName		!=	null">	package_name,					</if>
+				<if test="apkManifest.sharedUserId		!=	null">	shared_user_id,					</if>
+				<if test="apkManifest.sharedUserLabel	!=	null">	shared_user_label,				</if>
+				<if test="apkManifest.versionCode		!=	0">		version_code,					</if>
+				<if test="apkManifest.versionName		!=	null">	version_name,					</if>
+				<if test="apkManifest.installLocation	!=	null">	install_location,				</if>
+			</trim>
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum					!=	null">	#{fileChecksum},				</if>
+				<if test="apkManifest.xmlns				!=	null">	#{apkManifest.xmlns},			</if>
+				<if test="apkManifest.packageName		!=	null">	#{apkManifest.packageName},		</if>
+				<if test="apkManifest.sharedUserId		!=	null">	#{apkManifest.sharedUserId},	</if>
+				<if test="apkManifest.sharedUserLabel	!=	null">	#{apkManifest.sharedUserLabel},	</if>
+				<if test="apkManifest.versionCode		!=	0">		#{apkManifest.versionCode},		</if>
+				<if test="apkManifest.versionName		!=	null">	#{apkManifest.versionName},		</if>
+				<if test="apkManifest.installLocation	!=	null">	#{apkManifest.installLocation},	</if>
+			</trim>
+		)
+	</insert>
+	<insert id="insertInputApkSignature" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+		insert	into	tase_order_file_android_apk_signature	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum						!=	null">	file_checksum,						</if>
+				<if test="apkSignature.certificateType		!=	null">	certificate_type,					</if>
+				<if test="apkSignature.publicKeyModulus		!=	null">	public_key_modulus,					</if>
+				<if test="apkSignature.publicKeyExponent	!=	0">		public_key_exponent,				</if>
+				<if test="apkSignature.algorithm			!=	null">	algorithm,							</if>
+				<if test="apkSignature.certificateHashCode	!=	0">		certificate_hashcode,				</if>
+			</trim>
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum						!=	null">	#{fileChecksum},					</if>
+				<if test="apkSignature.certificateType		!=	null">	#{apkSignature.certificateType},	</if>
+				<if test="apkSignature.publicKeyModulus		!=	null">	#{apkSignature.publicKeyModulus},	</if>
+				<if test="apkSignature.publicKeyExponent	!=	0">		#{apkSignature.publicKeyExponent},	</if>
+				<if test="apkSignature.algorithm			!=	null">	#{apkSignature.algorithm},			</if>
+				<if test="apkSignature.certificateHashCode	!=	0">		#{apkSignature.certificateHashCode},</if>
+			</trim>
+		)
+	</insert>
+	<insert id="insertInputApkFileMetadata" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+		insert	into	tase_order_file_android_metadata	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileMetadata.fileChecksum		!=	null">	file_checksum,						</if>
+				<if test="bundleChecksum				!=	null">	bundle_checksum,					</if>
+				<if test="fileMetadata.fileName			!=	null">	file_name,							</if>
+				<if test="fileMetadata.extension		!=	null">	extension,							</if>
+				<if test="fileMetadata.length			!=	0">		length,								</if>
+				<if test="fileMetadata.createdTime		!=	0">		created_time,						</if>
+				<if test="fileMetadata.modifiedTime		!=	0">		modified_time,						</if>
+			</trim>	
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileMetadata.fileChecksum		!=	null">	#{fileMetadata.fileChecksum},		</if>
+				<if test="bundleChecksum				!=	null">	#{bundleChecksum},					</if>
+				<if test="fileMetadata.fileName			!=	null">	#{fileMetadata.fileName},			</if>
+				<if test="fileMetadata.extension		!=	null">	#{fileMetadata.extension},			</if>
+				<if test="fileMetadata.length			!=	0">		#{fileMetadata.length},				</if>
+				<if test="fileMetadata.createdTime		!=	0">		#{fileMetadata.createdTime},		</if>
+				<if test="fileMetadata.modifiedTime		!=	0">		#{fileMetadata.modifiedTime},		</if>
+			</trim>	
+		)
+	</insert>
+	<insert id="insertOutputApkFileMetadata" parameterType="FileMetadata" useGeneratedKeys="true" keyProperty="id">
+		insert	into	tase_order_file_android_metadata_output	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileMetadata.fileChecksum		!=	null">	file_checksum,						</if>
+				<if test="fileMetadata.bundleChecksum	!=	null">	bundle_checksum,					</if>
+				<if test="fileMetadata.fileName			!=	null">	file_name,							</if>
+				<if test="fileMetadata.extension		!=	null">	extension,							</if>
+				<if test="fileMetadata.length			!=	0">		length,								</if>
+				<if test="fileMetadata.createdTime		!=	0">		created_time,						</if>
+				<if test="fileMetadata.modifiedTime		!=	0">		modified_time,						</if>
+			</trim>	
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileMetadata.fileChecksum		!=	null">	#{fileMetadata.fileChecksum},		</if>
+				<if test="fileMetadata.bundleChecksum	!=	null">	#{fileMetadata.bundleChecksum},		</if>
+				<if test="fileMetadata.fileName			!=	null">	#{fileMetadata.fileName},			</if>
+				<if test="fileMetadata.extension		!=	null">	#{fileMetadata.extension},			</if>
+				<if test="fileMetadata.length			!=	0">		#{fileMetadata.length},				</if>
+				<if test="fileMetadata.createdTime		!=	0">		#{fileMetadata.createdTime},		</if>
+				<if test="fileMetadata.modifiedTime		!=	0">		#{fileMetadata.modifiedTime},		</if>
+			</trim>	
+		)
+	</insert>
+	<insert id="insertInputApkResource" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+		insert	into	tase_order_file_android_resource	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum	!=	null">	file_checksum,	</if>
+				<if test="filePath		!=	null">	file_path,		</if>
+			</trim>
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum	!=	null">	#{fileChecksum},</if>
+				<if test="filePath		!=	null">	#{filePath},	</if>
+			</trim>
+		)
+	</insert>
+	<insert id="insertOutputApkResource" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+		insert	into	tase_order_file_android_resource_output	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum	!=	null">	file_checksum,	</if>
+				<if test="filePath		!=	null">	file_path,		</if>
+			</trim>
+		)	values	(
+			<trim suffix="" suffixOverrides=",">
+				<if test="fileChecksum	!=	null">	#{fileChecksum},</if>
+				<if test="filePath		!=	null">	#{filePath},	</if>
+			</trim>
+		)
+	</insert>
+	<update id="updateApkStatus" parameterType="map" >
+		update	tase_order_file_android_status
+		set
+		<trim suffix="" suffixOverrides=",">
+	    	<if test="output_checksum	!= null">
+	    		output_checksum	= 	#{outputFileChecksum},
+	    	</if>
+	    	<if test="file_status		!=	0">
+	    		file_status		=	#{status},
+	    	</if>
+    	</trim>
+    	where	file_checksum	=	#{inputFileChecksum}
+	</update>
+</mapper>

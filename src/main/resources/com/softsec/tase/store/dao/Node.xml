@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softsec.tase.store.dao.Node">
+    <insert id="insertMasterNode" useGeneratedKeys="true" keyProperty="master_id">
+        insert into	tase_node_master (
+        		node_id
+        ) values (
+        		#{nodeId}
+        )
+    </insert>
+    <select id="selectMasterIdByNodeId" parameterType="string" resultType="int">
+        select	master_id
+        from	tase_node_master
+        where	node_id = #{nodeId}
+    </select>
+    <insert id="insertHardware" parameterType="nodeInfo">
+        insert into tase_node_hardware ( 
+        		node_id,
+        		cpu_vendor,
+        		cpu_model,
+        		cpu_cores,
+        		cpu_mhz,
+        		mem_size,
+        		fs_name,
+        		fs_type,
+        		fs_format,
+        		fs_size
+        ) values (
+        		#{nodeId},
+        		#{cpuVendor},
+        		#{cpuModel},
+        		#{cpuCores},
+        		#{cpuMhz},
+        		#{memSize},
+        		#{fsName},
+        		#{fsType},
+        		#{fsFormat},
+        		#{fsSize}
+        )
+    </insert>
+    <insert id="insertSoftware" parameterType="nodeInfo">
+        insert into tase_node_software (
+       			node_id,
+       			os_arch,
+       			os_name,
+       			os_desc,
+       			os_version,
+       			jvm_name,
+       			jvm_max_mem,
+       			node_type,
+       			queue_limit
+       	) values (
+       			#{nodeId},
+        		#{osArch},
+        		#{osName},
+        		#{osDesc},
+        		#{osVersion},
+        		#{jvmName},
+        		#{jvmMaxMem},
+        		#{nodeType},
+        		#{queueLimit}
+        )
+    </insert>
+    <insert id="insertNetwork" parameterType="nodeInfo">
+        insert into tase_node_network (
+        		node_id,
+       			domain_name,
+       			mac_address,
+       			network_connectivity,
+       			ip_address,
+       			rpc_port
+       	) values (
+       			#{nodeId},
+        		#{domainName},
+        		#{macAddress},
+        		#{networkConnectivity},
+        		#{ipAddress},
+        		#{rpcPort}
+        )
+    </insert>
+    <insert id="insertProcess" parameterType="nodeInfo">
+        insert into tase_node_process ( 
+        		node_id,
+       			pid,
+       			user,
+       			start_time,
+       			proc_name
+       	) values (
+       			#{nodeId},
+        		#{pid},
+        		#{user},
+        		#{startTime},
+        		#{procName}
+        )
+    </insert>
+    <insert id="insertPayload" parameterType="nodeInfo">
+        insert into tase_node_payload (
+        		node_id,
+       			cpu_used_perc,
+       			mem_used,
+       			jvm_alloc_mem,
+       			jvm_free_mem,
+       			fs_avail,
+       			fs_used,
+       			fs_used_perc,
+       			queue_num
+       	) values (
+       			#{nodeId},
+        		#{cpuUsedPerc},
+        		#{memUsed},
+        		#{jvmAllocMem},
+        		#{jvmFreeMem},
+        		#{fsAvail},
+        		#{fsUsed},
+        		#{fsUsedPerc},
+        		#{queueNum}
+        )
+    </insert>
+    <insert id="insertAggregation" parameterType="nodeInfo">
+        insert into tase_node_aggregation (
+        		node_id,
+        		config_updated,
+        		payload_updated,
+        		is_valid
+        ) values (
+        		#{nodeId},
+        		#{configUpdated},
+        		#{payloadUpdated},
+        		#{valid}
+        )
+    </insert>
+    <select id="selectNodeIdByNodeId" parameterType="string" resultType="string">
+        select	node_id
+        from	tase_node_aggregation
+        where	node_id = #{nodeId}
+    </select>
+    <update id="updateHardware" parameterType="nodeInfo">
+        update	tase_node_hardware
+        set		cpu_vendor = #{cpuVendor},
+	        	cpu_model = #{cpuModel},
+	        	cpu_cores = #{cpuCores},
+	        	cpu_mhz = #{cpuMhz},
+	        	mem_size = #{memSize},
+	        	fs_name = #{fsName},
+	        	fs_type = #{fsType},
+	        	fs_format = #{fsFormat},
+	        	fs_size = #{fsSize}
+        where	node_id = #{nodeId}
+    </update>
+    <update id="updateSoftware" parameterType="nodeInfo">
+        update	tase_node_software
+        set		os_arch = #{osArch},
+	        	os_name = #{osName},
+	        	os_desc = #{osDesc},
+	        	os_version = #{osVersion},
+	        	jvm_name = #{jvmName},
+	        	jvm_version = #{jvmVersion},
+	        	jvm_max_mem = #{jvmMaxMem},
+	        	node_type = #{nodeType},
+	        	queue_limit = #{queueLimit}
+        where	node_id = #{nodeId}
+    </update>
+    <update id="updateNetwork" parameterType="nodeInfo">
+        update	tase_node_network
+        set		domain_name = #{domainName},
+	        	mac_address = #{macAddress},
+	        	network_connectivity = #{networkConnectivity},
+	        	ip_address = #{ipAddress},
+	        	rpc_port = #{rpcPort}
+        where	node_id = #{nodeId}
+    </update>
+    <update id="updateProcess" parameterType="nodeInfo">
+        update	tase_node_process
+        set		pid = #{pid},
+	        	user = #{user},
+	        	start_time = #{startTime},
+	        	proc_name = #{procName}
+        where	node_id = #{nodeId}
+    </update>
+    <update id="updatePayload" parameterType="nodeInfo">
+        update	tase_node_payload
+        set		cpu_used_perc = #{cpuUsedPerc},
+	        	mem_used = #{memUsed},
+	        	jvm_alloc_mem = #{jvmAllocMem},
+	        	jvm_free_mem = #{jvmFreeMem},
+	        	fs_avail = #{fsAvail},
+	        	fs_used = #{fsUsed},
+	        	fs_used_perc = #{fsUsedPerc},
+	        	queue_num = #{queueNum}
+        where	node_id = #{nodeId}
+    </update>
+    <update id="updateAggregation" parameterType="nodeInfo">
+        update	tase_node_aggregation
+        set		config_updated = #{configUpdated},
+	        	payload_updated = #{payloadUpdated},
+	        	is_valid = #{valid}
+        where	node_id = #{nodeId}
+    </update>
+    <select id="selectNodesByNodeType" parameterType="int" resultType="node">
+        select	tase_node_aggregation.node_id as nodeId,
+        		tase_node_software.node_type as nodeType,
+        		tase_node_payload.cpu_used_perc as cpuUsedPerc,
+        		tase_node_hardware.mem_size - tase_node_payload.mem_used as memAvail,
+        		tase_node_hardware.fs_size - tase_node_payload.fs_used as fsAvail,
+        		tase_node_software.os_name as osName,
+        		tase_node_software.jvm_version as jvmVersion,
+        		tase_node_softwae.queue_limit - tase_node_payload.queue_num as residualQuota,
+        		tase_node_aggregation.config_updated as configUpdated,
+        		tase_node_aggregation.payload_updated as payloadUpdated,
+        		tase_node_aggregation.is_valid as isValid
+        from	tase_node_aggregration,
+        		tase_node_hardware, 
+        		tase_node_software, 
+        		tase_node_payload
+        where	tase_node_aggregration.node_id = tase_node_hardware.node_id
+        and		tase_node_hardware.node_id = tase_node_software.node_id
+        and		tase_node_software.node_id = tase_node_payload.node_id
+       	and		tase_node_software.node_type = #{value}
+    </select>
+    <select id="selectAllNodes" resultType="node">
+        select	tase_node_aggregation.node_id as nodeId,
+        		tase_node_software.node_type as nodeType,
+        		tase_node_payload.cpu_used_perc as cpuUsedPerc,
+        		tase_node_hardware.mem_size - tase_node_payload.mem_used as memAvail,
+        		tase_node_hardware.fs_size - tase_node_payload.fs_used as fsAvail,
+        		tase_node_software.os_name as osName,
+        		tase_node_software.jvm_version as jvmVersion,
+        		tase_node_software.queue_limit - tase_node_payload.queue_num as residualQuota,
+        		tase_node_aggregation.config_updated as configUpdated,
+        		tase_node_aggregation.payload_updated as payloadUpdated,
+        		tase_node_aggregation.is_valid as isValid
+        from	tase_node_aggregation,
+        		tase_node_hardware, 
+        		tase_node_software, 
+        		tase_node_payload
+        where	tase_node_aggregation.node_id = tase_node_hardware.node_id
+        and		tase_node_hardware.node_id = tase_node_software.node_id
+        and		tase_node_software.node_id = tase_node_payload.node_id
+    </select>
+    <update id="updateNodeQueueNum" parameterType="string">
+        update	tase_node_payload
+        set		queue_num = queue_num + 1
+        where	node_id = #{value}
+    </update>
+</mapper>

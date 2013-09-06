@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softsec.tase.store.dao.App">
+	<insert id="insertAppAdvertisement" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+		insert	into	${tableName}	(
+			app_id,
+			advertiser_name,
+			advertiser_website,
+			advertiser_email
+		)	values
+		<foreach collection="appAdvertiserList" item="appAdvertiser" open="(" separator="),(" close=")">
+			'${appId}',
+			'${appAdvertiser.advertiserName}',
+			'${appAdvertiser.advertiserWebsite}',
+			'${appAdvertiser.advertiserEmail}'
+		</foreach>
+	</insert>
+    <insert id="insertAppAntivirus" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+        insert 	into	${tableName} (
+        	app_id,
+        	antivirus_vendor,
+        	antivirus_result
+        ) values
+        <foreach collection="appAntivirusList" item="appAntivirus" open="(" separator="),(" close=")">
+        	'${appId}',
+        	'${appAntivirus.antivirusVendor}',
+        	'${appAntivirus.antivirusResult}'
+        </foreach>
+    </insert>
+    <insert id="insertAppCategory" parameterType="map" useGeneratedKeys="true" keyProperty="category_id" statementType="STATEMENT">
+        insert 	into	${tableName}	(
+        	<trim suffix="" suffixOverrides=",">
+        		<if test="storeName		!= null">	store_name,		</if>
+        		<if test="category		!= null">	category,		</if>
+        		<if test="masterId		!= 0">		master_id,		</if>
+        		collected_count,
+        		downloaded_count
+        	</trim>
+       	) values (
+       		<trim>
+	   			<if test="storeName		!= null">	'${storeName}',	</if>
+    			<if test="category		!= null">	'${category}',	</if>
+    			<if test="masterId		!= 0">		'${masterId}',	</if>
+				0,
+				0
+       		</trim>
+        )
+    </insert>
+    <insert id="insertAppChecksum" parameterType="map" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="appId 		!= 0">		app_id,				</if>
+    			<if test="appChecksum 	!= null">	app_checksum,		</if>
+    			<if test="loadedTime 	!= 0">		loaded_time,		</if>
+    		</trim>
+    	) values (
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="appId 		!= 0">		'${appId}',			</if>
+    			<if test="appChecksum 	!= null">	'${appChecksum}',	</if>
+    			<if test="loadedTime 	!= 0">		'${loadedTime}',	</if>
+    		</trim>
+    	)
+    </insert>
+    <insert id="insertAppComment" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+    	insert	into	${tableName}	{
+    		app_id,
+    		user_name,
+    		content,
+    		comment_time
+    	} values
+    	<foreach collection="appCommentList" item="appComment" open="(" separator="),(" close=")">
+    		'${appId}',
+    		'${appComment.userName}',
+    		'${appComment.content}',
+    		'${appComment.commentTime}'
+    	</foreach>
+    </insert>
+    <insert id="insertAppDeveloper" parameterType="map" statementType="STATEMENT">
+        insert	into	${tableName}	(
+        	<trim suffix="" suffixOverrides=",">
+        	    <if test="appId 			!= 0">		app_id,					</if>
+        	    <if test="developerName		!= null">	developer_name,			</if>
+        	    <if test="developerWebsite 	!= null">	developer_website,		</if>
+        	    <if test="developerEmail 	!= null">	developer_email,		</if>
+        	    <if test="privacyPolicy 	!= null">	privacy_policy,			</if>
+        	</trim>
+        ) values (
+        	<trim suffix="" suffixOverrides=",">
+        	    <if test="appId 			!= 0">		'${appId}',				</if>
+        	    <if test="developerName		!= null">	'${developerName}',		</if>
+        	    <if test="developerWebsite 	!= null">	'${developerWebsite}',	</if>
+        	    <if test="developerEmail 	!= null">	'${developerEmail}',	</if>
+        	    <if test="privacyPolicy 	!= null">	'${privacyPolicy}',		</if>
+        	</trim>
+        )
+    </insert>
+    <insert id="insertAppExternal" parameterType="map" statementType="STATEMENT">
+        insert	into	${tableName}	(
+        	app_id,
+        	external_store_name,
+        	external_url,
+        	is_app_downloaded
+        ) values 
+       <foreach collection="appExternalLinkList" item="appExternalLink" open="(" separator="),(" close=")">
+       		'${appId}',
+       		'${appExternalLink.externalStoreName}',
+       		'${appExternalLink.externalUrl}',
+       		0
+       </foreach>
+    </insert>
+    <insert id="insertAppInternal" parameterType="map" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="appId		!= 0">		app_id,			</if>
+    			<if test="innerId	!= null">	inner_id,		</if>
+    		</trim>
+    	)	values	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="appId		!= 0">		'${appId}',		</if>
+    			<if test="innerId	!= null">	'${innerId}',	</if>
+    		</trim>
+    	)
+    </insert>
+    <insert id="insertAppLabel"	parameterType="string" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		app_id,
+    		has_keyword
+    	)	values (
+    		'${appId}',
+    		'${hasKeyword}'
+    	)
+    </insert>
+    <insert id="insertAppMisc" parameterType="map" statementType="STATEMENT">
+        insert 	into	${tableName} (
+        	<trim suffix="" suffixOverrides=",">
+        	    <if test="appId 		!= 0">		app_id,				</if>
+        	    <if test="country 		!= null">	country,			</if>
+        	    <if test="language 		!= null">	language,			</if>
+        	    <if test="description 	!= null">	description,		</if>
+        	    <if test="size 			!= null">	size,				</if>
+        	    <if test="currencyUnit 	!= null">	currency_unit,		</if>
+        	    <if test="price 		!= 0">		price,				</if>
+        	</trim>
+        ) 	values 	(
+            <trim suffix="" suffixOverrides=",">
+        	    <if test="appId 		!= 0">		'${appId}',			</if>
+        	    <if test="country 		!= null">	'${country}',			</if>
+        	    <if test="language 		!= null">	'${language}',		</if>
+        	    <if test="description 	!= null">	'${description}',		</if>
+        	    <if test="size 			!= null">	'${size}',			</if>
+        	    <if test="currencyUnit 	!= null">	'${currencyUnit}',	</if>
+        	    <if test="price 		!= 0">		'${price}',			</if>
+        	</trim>
+        )
+    </insert>
+    <insert id="insertAppPermission" parameterType="map" statementType="STATEMENT">
+        insert 	into	${tableName} (
+        	app_id,
+        	permission_group,
+        	permission_desc,
+        	permission_desc_full
+        ) values (
+       	<foreach collection="appPermissionList" item="appPermission" open="(" separator="),(" close=")">
+       		'${appId}',
+       		'${appPermission.permissionGroup}',
+       		'${appPermission.permissionDesc}',
+       		'${appPermission.permissionDescFull}'
+       	</foreach>
+        )
+    </insert>
+    <insert id="insertAppPlatform" parameterType="map" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="appId			!= 0">		app_id,				</if>	
+    			<if test="platformName	!= null">	platform_name,		</if>
+    			<if test="osType		!= null">	os_type,			</if>
+    			<if test="osVersion		!= null">	os_version,			</if>
+    			<if test="device		!= null">	device,				</if>
+    		</trim>	
+    	)	values	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="appId			!= 0">		'${appId}',			</if>
+    			<if test="platformName	!= null">	'${platformName}',	</if>
+    			<if test="osType		!= null">	'${osType}',		</if>
+    			<if test="osVersion		!= null">	'${osVersion}',		</if>
+    			<if test="device		!= null">	'${device}',		</if>
+    		</trim>	    	
+    	)
+    </insert>
+    <insert id="insertAppResource" parameterType="map" statementType="STATEMENT">
+        insert 	into	${tableName} (
+	        <trim suffix="" suffixOverrides=",">
+	            <if test="appId 		!= 0">		app_id,				</if>
+	            <if test="url 			!= null">	url,				</if>
+	            <if test="downloadUrl 	!= null">	download_url,		</if>
+	            <if test="logoUrl 		!= null">	logo_url,			</if>
+	        </trim>
+        ) values (
+        	<trim suffix="" suffixOverrides=",">
+	            <if test="appId 		!= 0">		'${appId}',			</if>
+	            <if test="url 			!= null">	'${url}',			</if>
+	            <if test="downloadUrl 	!= null">	'${downloadUrl}',	</if>
+	            <if test="logoUrl 		!= null">	'${logoUrl}',		</if>
+        	</trim>
+        )
+    </insert>
+    <insert id="insertAppSnapshot" parameterType="map" useGeneratedKeys="true" keyProperty="id" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		app_id,
+    		snapshot_url
+    	)	values
+    	<foreach collection="appSnapshotUrlList" item="appSnapshotUrl" open="(" separator="),(" close=")">
+    		'${appId}',
+    		'${appSnapshotUrl}'
+    	</foreach>
+    </insert>
+    <insert id="insertAppStatistic" parameterType="map" statementType="STATEMENT">
+        insert	into	${tableName} (
+        <trim suffix="" suffixOverrides=",">
+            <if test="appId 			!= 0">		app_id,					</if>
+            <if test="downloadFloor 	!= 0">		download_floor,			</if>
+            <if test="downloadCeiling 	!= 0">		download_ceiling,		</if>
+            <if test="rating			!= 0">		rating,					</if>	
+            <if test="ratingCount 		!= 0">		rating_count,			</if>
+            <if test="review 			!= null">	review,					</if>
+            <if test="contentRating 	!= null">	content_rating,			</if>
+        </trim>
+       	) values (         
+       	<trim suffix="" suffixOverrides=",">
+            <if test="appId 			!= 0">		'${appId}',				</if>
+            <if test="downloadFloor 	!= 0">		'${downloadFloor}',		</if>
+            <if test="downloadCeiling 	!= 0">		'${downloadCeiling}',	</if>
+            <if test="rating 			!= 0">		'${rating}',			</if>
+            <if test="ratingCount 		!= 0">		'${ratingCount}',		</if>
+            <if test="review			!= null">	'${review}',			</if>
+            <if test="contentRating 	!= null">	'${contentRating}',		</if>
+        </trim>
+        )
+    </insert>
+    <insert id="insertAppStatus" parameterType="string" statementType="STATEMENT">
+    	insert	into	${tableName}	(
+    		app_id,
+    		is_deprecated,
+    		is_file_downloaded,
+    		is_image_downloaded,
+    		is_logo_downloaded
+    	)	values (
+    		'${appId}',
+    		'${isDeprecated}',
+    		'${isFileDownloaded}',
+    		'${isImageDownloaded}',
+    		'${isLogoDownloaded}'
+    	)
+    </insert>
+    <insert id="insertAppStore" parameterType="map" useGeneratedKeys="true" keyProperty="store_id" statementType="STATEMENT">
+        insert 	into	${tableName}	(
+        	<trim suffix="" suffixOverrides=",">
+        		<if test="storeName			!= null">	store_name,				</if>
+        		<if test="storeDisplayName	!= null">	store_display_name,		</if>
+        		<if test="storeUrl			!= null">	store_url,				</if>
+        		<if test="storeType			!= 0">		store_type,				</if>
+        	</trim>
+       	) values (
+        	<trim suffix="" suffixOverrides=",">
+        		<if test="storeName			!= null">	'${storeName}',			</if>
+        		<if test="storeDisplayName	!= null">	'${storeDisplayName}',	</if>
+        		<if test="storeUrl			!= null">	'${storeUrl}',			</if>
+        		<if test="storeType			!= 0">		'${storeType}',			</if>
+        	</trim>
+       	)
+    </insert>
+    <insert id="insertAppVersion" parameterType="map" statementType="STATEMENT">
+        insert	 into	${tableName} 	(
+        	<trim suffix="" suffixOverrides=",">
+        	    <if test="appId 			!= 0">		app_id,					</if>
+        	    <if test="appVersion 		!= null">	version,				</if>
+        	    <if test="updatedTime 		!= 0">		updated_time,			</if>
+        	    <if test="updateHistory 	!= null">	update_history,			</if>
+        	    <if test="majorVersion 		!= 0">		major_version,			</if>
+        	    <if test="minorVersion 		!= 0">		minor_version,			</if>
+        	    <if test="revisionVersion	!= 0">		revision_version,		</if>
+        	    <if test="buildVersion 		!= 0">		build_version,			</if>
+        	    <if test="extraVersion 		!= 0">		extra_version,			</if>
+        	</trim>
+        ) values (
+        	<trim suffix="" suffixOverrides=",">
+        	    <if test="appId 			!= 0">		'${appId}',				</if>
+        	    <if test="appVersion 		!= null">	'${appVersion}',		</if>
+        	    <if test="updatedTime 		!= 0">		'${updatedTime}',		</if>
+        	    <if test="updateHistory 	!= null">	'${updateHistory}',		</if>
+        	    <if test="majorVersion 		!= 0">		'${majorVersion}',		</if>
+        	    <if test="minorVersion 		!= 0">		'${minorVersion}',		</if>
+        	    <if test="revisionVersion 	!= 0">		'${revisionVersion}',	</if>
+        	    <if test="buildVersion 		!= 0">		'${buildVersion}',		</if>
+        	    <if test="extraVersion 		!= 0">		'${extraVersion}',		</if>
+        	</trim>
+        )
+    </insert>
+    <insert id="insertAppVisualization" parameterType="map" statementType="STATEMENT">
+        insert 	into	${tableName} (
+        	<trim suffix="" suffixOverrides=",">
+        	    <if test="appId 			!= 0">		app_id,					</if>
+        	    <if test="storeDisplayName 	!= null">	store_display_name,		</if>
+        	    <if test="appName 			!= null">	app_name,				</if>
+        	    <if test="version 			!= null">	version,				</if>
+        	    <if test="size 				!= null">	size,					</if>
+        	    <if test="url 				!= null">	url,					</if>
+        	</trim>
+        )	values	(
+        	<trim suffix="" suffixOverrides=",">
+        	    <if test="appId 			!= 0">		'${appId}',				</if>
+        	    <if test="storeDisplayName 	!= null">	'${storeDisplayName}',	</if>
+        	    <if test="appName 			!= null">	'${appName}',			</if>
+        	    <if test="version 			!= null">	'${version}',			</if>
+        	    <if test="size 				!= null">	'${size}',				</if>
+        	    <if test="url 				!= null">	'${url}',				</if>
+        	</trim>
+        )
+    </insert>
+	<select id="selectCategoryListByMasterId" parameterType="map" resultType="appCategoryItem" statementType="STATEMENT">
+        select	category_id			as	categoryId,
+        		store_name			as	storeName,
+        		category,
+        		master_id			as	masterId,
+        		collected_count		as	collectedCount
+        from	${tableName}
+        where	master_id			=	'${masterId}'
+    </select>
+    <select id="selectStoreIdByStoreName"	parameterType="map"	resultType="int" statementType="STATEMENT">
+        select	store_id
+        from	${tableName}
+        where	store_name			=	'${storeName}'
+    </select>
+    <select id="selectCategoryIdByStoreNameAndCategory"	parameterType="map" resultType="int" statementType="STATEMENT">
+        select	category_id
+        from	${tableName}
+        where	store_name			=	'${storeName}'
+      	and		category			=	'${category}'
+        and		master_id			=	'${masterId}'
+    </select>
+    <select id="selectAppIdByAppChecksum" parameterType="map" 	resultType="long" statementType="STATEMENT">
+        select	app_id
+        from	${tableName}
+        where	app_checksum		=	'${appChecksum}'
+    </select>
+    <select id="selectAppCollectedCountByCategoryId" 	parameterType="map" resultType="long" statementType="STATEMENT">
+        select	collected_count
+        from	${tableName}
+        where	category_id			=	'${categoryId}'
+    </select>
+    <update id="updateAppCollectedCountByCategoryId" 	parameterType="map" statementType="STATEMENT">
+        update	${tableName}
+        set		collected_count		=	'${collectedCount}'
+        where	category_id			=	'${categoryId}'
+    </update>
+    <update id="updateAppDownloadedCountByCategoryId" 	parameterType="map" statementType="STATEMENT">
+        update	${tableName}
+        set		downloaded_count 	= 	downloaded_count + 1
+        where	category_id 		= 	'${categoryId}'
+    </update>
+    <update id="updateAppStatus" parameterType="map" statementType="STATEMENT">
+    	update	${tableName}
+    	set
+    	<trim suffix="" suffixOverrides=",">
+	    	<if test="isDeprecated		!= 0">
+	    		is_deprecated		=	'${isDeprecated}',
+	    	</if>
+	    	<if test="isFileDownloaded	!= 0">
+	    		is_file_downloaded	= 	'${isFileDownloaded}',
+	    	</if>
+	    	<if test="isImageDownloaded	!= 0">
+	    		is_image_downloaded = 	'${isImageDownloaded}',
+	    	</if>
+	    	<if test="isLogoDownloaded	!= 0">
+	    		is_logo_downloaded	=	'${isLogoDownloaded}',
+	    	</if>
+    	</trim>
+    	where	app_id				=	'${appId}'
+    </update>
+</mapper>

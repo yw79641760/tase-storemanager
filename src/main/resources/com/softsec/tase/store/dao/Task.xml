@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softsec.tase.store.dao.Task" >
+    <resultMap	type="task"	id="taskResult">
+        <id		property="taskId"			column="taskId"			javaType="Long" />
+        <result property="taskPriority"		column="taskPriority"	javaType="jobPriority" />
+        <result property="jobPhase"			column="jobPhase"		javaType="jobPhase"	/>
+        <result property="taskStatus" 		column="taskStatus" 	javaType="jobStatus" />
+        <result property="programId" 		column="programId" 		javaType="Long" />
+        <result property="executorId" 		column="executorId" 	javaType="String" />
+        <result property="loadedTime" 		column="loadedTime" 	javaType="Long" />
+        <association property="taskOperationRequirement"	javaType="jobOperationRequirement"	resultMap="operationResult"	columnPrefix="op_" />
+        <association property="taskResourceRequirement"		javaType="jobResourceRequirement"	resultMap="resourceResult"	columnPrefix="resc_" />
+        <association property="taskParameter"				javaType="jobParameter"				resultMap="jobParameterResult"	columnPrefix="param_"/>
+    </resultMap>
+    <resultMap	type="jobOperationRequirement"	id="operationResult">
+        <result	property="jobPhase"			column="jobPhase"			javaType="jobPhase" />
+        <result property="jobExecutionMode" column="jobExecutionMode"	javaType="jobExecutionMode" />
+        <result property="jobReturnMode" 	column="jobReturnMode" 		javaType="jobReturnMode" />
+        <result property="timeout" 			column="timeout" 			javaType="Long" />
+    </resultMap>
+    <resultMap	type="jobResourceRequirement"	id="resourceResult">
+        <result	property="jobPhase"		column="jobPhase"		javaType="jobPhase" />
+        <result property="programId"	column="programId" 		javaType="Long" />
+        <result property="executorId" 	column="executorId" 	javaType="String" />
+        <result property="clusterType" 	column="clusterType" 	javaType="clusterType" />
+        <result property="nodeType" 	column="nodeType" 		javaType="nodeType" />
+    </resultMap>
+    <resultMap	type="jobParameter"	id="jobParameterResult">
+        <result		property="jobPhase"				column="jobPhase"			javaType="jobPhase" />
+        <collection property="contextParameterList"	ofType="contextParameter"	javaType="ArrayList" resultMap="contextParameterResult"/>
+    </resultMap>
+    <resultMap type="contextParameter" id="contextParameterResult">
+    	<result	property="sequenceNum"		column="sequenceNum"		javaType="Integer"/>
+    	<result	property="opt"				column="opt"				javaType="String"/>
+    	<result property="content"			column="content"			javaType="String"/>
+    	<result property="needDownload"		column="needDownload"		javaType="Boolean"/>
+    </resultMap>
+    <sql id="selectTaskList">
+		select			tase_task_basic.task_id					as	taskId,
+		        		tase_task_basic.task_priority			as	taskPriority,
+		        		tase_task_status.job_phase				as	jobPhase,
+		        		tase_job_operation.job_phase			as	op_jobPhase,
+		        		tase_job_operation.job_execution_mode	as	op_jobExecutionMode,
+		        		tase_job_operation.job_return_mode		as	op_jobReturnMode,
+		        		tase_job_operation.timeout				as	op_timeout,
+		        		tase_job_resource.job_phase				as	resc_jobPhase,
+		        		tase_job_resource.program_id			as	resc_programId,
+		        		tase_job_resource.executor_id			as	resc_executorId,
+		        		tase_job_resource.cluster_type			as	resc_clusterType,
+		        		tase_job_resource.node_type				as	resc_nodeType,
+    		        	tase_task_parameter.job_phase			as	param_jobPhase,
+		        		tase_task_parameter.sequence_num		as	param_sequenceNum,
+		        		tase_task_parameter.opt					as	param_opt,
+		        		tase_task_parameter.content				as	param_content,
+		        		tase_task_parameter.need_download		as	param_needDownload,
+		        		tase_task_status.task_status			as	taskStatus,
+		        		tase_task_scheduling.program_id			as	programId,
+		        		tase_task_scheduling.executor_id		as	executorId,
+		        		tase_job_status.committed_time			as	loadedTime
+        from			tase_task_status
+        left outer join	tase_task_basic
+        on				tase_task_basic.task_id			=	tase_task_status.task_id
+        left outer join tase_job_operation
+        on				tase_job_operation.job_id 		= 	round(tase_task_status.task_id / 100, 0)
+        and				tase_job_operation.job_phase 	= 	tase_task_status.job_phase
+        left outer join tase_job_resource
+       	on				tase_job_resource.job_id 		=	round(tase_task_status.task_id / 100, 0)
+        and				tase_job_resource.job_phase 	=	tase_task_status.job_phase
+        left outer join tase_task_parameter
+      	on				tase_task_parameter.task_id 	= 	tase_task_status.task_id
+        and				tase_task_parameter.job_phase 	= 	tase_task_status.job_phase
+        left outer join tase_task_scheduling
+        on				tase_task_scheduling.task_id 	= 	tase_task_status.task_id
+        and				tase_task_scheduling.job_phase 	= 	tase_task_status.job_phase
+        left outer join tase_job_status
+        on				tase_job_status.job_id			=	tase_task_status.task_id / 100
+    </sql>
+    <select	id="selectTaskListByTaskStatus"		parameterType="jobStatus"	resultMap="taskResult">
+        <include	refid="selectTaskList"/>
+        where		tase_task_status.task_status		=	#{taskStatus}
+    </select>
+    <select	id="selectTaskListByTaskStatusList" parameterType="list" 		resultMap="taskResult">
+        <include	refid="selectTaskList"/>
+        where	tase_task_status.task_status	in
+        <foreach collection="list" item="taskStatus" open="(" separator="," close=")">#{taskStatus}</foreach>
+    </select>
+    
+    <insert id="insertTaskBasic" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_task_basic ( 
+       			task_id,
+       			task_priority
+		) values (
+				#{taskId,		jdbcType=BIGINT},
+        		#{taskPriority, jdbcType=VARCHAR}
+       	)
+    </insert>
+    <insert id="insertTaskParameter" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_task_parameter (
+       			task_id,
+       			job_phase,
+       			sequence_num,
+       			opt,
+       			content,
+       			need_download
+        ) values
+        <foreach collection="contextParameterList" item="contextParameter" open="(" separator="),(" close=")">
+       			#{taskId,							jdbcType=NUMERIC},
+       			#{jobPhase,							jdbcType=VARCHAR},
+       			#{contextParameter.sequenceNum,		jdbcType=NUMERIC},
+       			#{contextParameter.option, 			jdbcType=VARCHAR},
+       			#{contextParameter.content, 		jdbcType=VARCHAR},
+       			#{contextParameter.needDownload, 	jdbcType=NUMERIC}
+        </foreach>
+    </insert>
+    <insert id="insertTaskScheduling" parameterType="task" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_task_scheduling (
+       			task_id,
+       			job_phase,
+       			program_id,
+       			executor_id
+        ) values (
+       			#{taskId,		jdbcType=NUMERIC},
+       			#{jobPhase,		jdbcType=VARCHAR},
+       			#{programId,	jdbcType=BIGINT},
+       			#{executorId,	jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertTaskStatus" parameterType="task" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_task_status (
+       			task_id,
+       			job_phase,
+       			task_status
+        ) values (
+       			#{taskId,		jdbcType=NUMERIC},
+       			#{jobPhase,		jdbcType=VARCHAR},
+       			#{taskStatus,	jdbcType=VARCHAR}
+        )
+    </insert>
+    <update id="updateTaskStatusByTaskIdAndPhase" parameterType="map">
+        update	tase_task_status
+        set		task_status	=	#{taskStatus}
+        where	task_id		=	#{taskId}
+        and		job_phase	= 	#{jobPhase}
+    </update>
+    <select id="selectTaskParameterByTaskIdAndJobPhase" parameterType="map" resultMap="jobParameterResult">
+    	select	tase_task_parameter.job_phase		as	jobPhase,
+    			tase_task_parameter.sequence_num	as	sequenceNum,
+    			tase_task_parameter.opt				as	opt,
+    			tase_task_parameter.content			as	content,
+    			tase_task_parameter.need_download	as	needDownload
+    	from	tase_task_parameter
+    	where	tase_task_parameter.task_id			=	#{taskId}
+    	and		tase_task_parameter.job_phase		=	#{jobPhase}
+    </select>
+    <select id="selectTaskByTaskIdByJobPhase" parameterType="map" resultMap="taskResult">
+    	select			tase_task_basic.task_id					as	taskId,
+		        		tase_task_basic.task_priority			as	taskPriority,
+		        		tase_task_status.job_phase				as	jobPhase,
+    		        	tase_task_parameter.job_phase			as	param_jobPhase,
+		        		tase_task_parameter.sequence_num		as	param_sequenceNum,
+		        		tase_task_parameter.opt					as	param_opt,
+		        		tase_task_parameter.content				as	param_content,
+		        		tase_task_parameter.need_download		as	param_needDownload,
+		        		tase_task_status.task_status			as	taskStatus
+        from			tase_task_status
+        left outer join	tase_task_basic
+        on				tase_task_basic.task_id			=	tase_task_status.task_id
+        left outer join tase_task_parameter
+      	on				tase_task_parameter.task_id 	= 	round(tase_task_status.task_id / 100)
+        and				tase_task_parameter.job_phase 	= 	tase_task_status.job_phase
+        where			tase_task_basic.task_id			=	#{taskId}
+        and				tase_task_status.job_phase		=	#{jobPhase}
+    </select>
+</mapper>

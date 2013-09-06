@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softsec.tase.store.dao.Job">
+    <select id="selectJobTypeListByMasterId" resultType="jobTypeItem">
+        select	job_type 	as	jobType,
+        		master_id 	as	masterId,
+        		job_count 	as	jobCount
+        from	tase_job_type
+        where	master_id 	=	#{value}
+    </select>
+    <insert id="insertJobType" parameterType="map">
+        insert into tase_job_type (
+        		job_type,
+        		master_id
+        ) values (
+        		#{jobType,	jdbcType=NUMERIC},
+        		#{masterId, jdbcType=NUMERIC}
+        )
+    </insert>
+    <update id="updateJobCountByJobType" parameterType="map">
+        update	tase_job_type
+        set		job_count	=	#{jobCount}
+        where	job_type	=	#{jobType}
+        and		master_id	=	#{masterId}
+    </update>
+    <select id="selectJobRequirementItemByJobId" parameterType="long" resultType="jobRequirementItem">
+        select	job_id 			as	jobId,
+        		job_operation 	as	jobOperationRequirement,
+        		job_resource 	as 	jobResourceRequirement
+        from	tase_job_requirement
+        where	job_id 			= 	#{value}
+    </select>
+    <insert id="insertJobBasic" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_job_basic ( 
+	  			job_id,
+	  			job_priority,
+	  			job_distribution_mode
+        ) values (
+       			#{jobId, 				jdbcType=NUMERIC},
+       			#{jobPriority, 			jdbcType=VARCHAR},
+       			#{jobDistributionMode, 	jdbcType=VARCHAR}
+       	)
+    </insert>
+    <insert id="insertJobOperation" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_job_operation (
+       			job_id,
+       			job_phase,
+				job_execution_mode,
+				job_return_mode,
+				timeout 
+		) values
+       	<foreach collection="jobOperationRequirementList" item="jobOperationRequirement" open="(" separator="),(" close=")">
+   	    		#{jobId, 									jdbcType=NUMERIC},
+   	    		#{jobOperationRequirement.jobPhase, 		jdbcType=VARCHAR},
+   	    		#{jobOperationRequirement.jobExecutionMode, jdbcType=VARCHAR},
+   	    		#{jobOperationRequirement.jobReturnMode, 	jdbcType=VARCHAR},
+	       		#{jobOperationRequirement.timeout, 			jdbcType=NUMERIC}
+       	</foreach>
+    </insert>
+    <insert id="insertJobParameter" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_job_parameter ( 
+       			job_id,
+       			job_phase,
+       			sequence_num,
+       			opt,
+       			content,
+       			need_download
+        ) values
+        <foreach collection="contextParameterList" item="contextParameter" open="(" close=")" separator="),(">
+           		#{jobId, 							jdbcType=NUMERIC},
+           		#{jobPhase,							jdbcType=VARCHAR},
+           		#{contextParameter.sequenceNum,		jdbcType=NUMERIC},
+           		#{contextParameter.opt,				jdbcType=VARCHAR},
+           		#{contextParameter.content,			jdbcType=VARCHAR},
+           		#{contextParameter.needDownload,	jdbcType=NUMERIC}
+        </foreach>
+    </insert>
+    <insert id="insertJobPossession" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_job_possession	(
+       			job_id,
+       			submitter_id
+        ) values (
+        		#{jobId, 		jdbcType=NUMERIC},
+        		#{submitterId,	jdbcType=NUMERIC}
+       	)
+    </insert>
+    <insert id="insertJobResource" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into tase_job_resource (
+      			job_id,
+				job_phase,
+				program_id,
+				executor_id,
+				cluster_type,
+				node_type
+		) values
+		<foreach collection="jobResourceRequirementList" item="jobResourceRequirement" open="(" close=")" separator="),(">
+				#{jobId, 								jdbcType=NUMERIC},
+	      		#{jobResourceRequirement.jobPhase,		jdbcType=VARCHAR},
+	      		#{jobResourceRequirement.programId, 	jdbcType=NUMERIC},
+	      		#{jobResourceRequirement.executorId, 	jdbcType=VARCHAR},
+	      		#{jobResourceRequirement.clusterType,	jdbcType=VARCHAR},
+	      		#{jobResourceRequirement.nodeType,		jdbcType=VARCHAR}
+		</foreach>
+    </insert>
+    <insert id="insertJobStatus" parameterType="map">
+        insert into	tase_job_status (	
+	            job_id,
+	            impatience_time,
+	            committed_time,
+	            job_status
+        ) values (	
+           		#{jobId,			jdbcType=NUMERIC},
+           		#{impatienceTime,	jdbcType=BIGINT},
+           		#{committedTime,	jdbcType=BIGINT},
+           		#{jobStatus,		jdbcType=NUMERIC}
+        )
+    </insert>
+    <select id="selectJobOperationRequirementByJobIdAndJobPhase" parameterType="map" resultType="jobOperationRequirement">
+        select	job_phase			as	jobPhase,
+        		job_execution_mode	as	jobExecutionMode,
+        		job_return_mode		as	jobReturnMode,
+        		timeout 			as 	timeout
+        from	tase_job_operation
+        where	job_id 				= 	#{jobId}
+        and		job_phase 			= 	#{jobPhase}
+    </select>
+    <select id="selectJobResourceRequirementByJobIdAndJobPhase" parameterType="map" resultType="jobResourceRequirement">
+        select	job_phase		as	jobPhase,
+        		program_id		as	programId,
+        		executor_id		as 	executorId,
+        		cluster_type	as 	clusterType,
+        		node_type 		as	nodeType
+        from	tase_job_resource
+        where	job_id 			= 	#{jobId}
+        and		job_phase 		= 	#{jobPhase}
+    </select>
+    <select id="selectJobPriorityByJobId" parameterType="long" resultType="jobPriority">
+        select	job_priority	as	jobPriority
+        from	tase_job_basic
+        where	job_id			=	#{value}
+    </select>
+    <select id="selectJobDistributionModeByJobId" parameterType="long" resultType="jobDistributionMode">
+    	select	job_distribution_mode	as	jobDistributionMode
+    	from	tase_job_basic
+    	where	job_id					=	#{value}
+    </select>
+</mapper>
