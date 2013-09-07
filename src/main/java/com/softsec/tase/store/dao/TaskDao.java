@@ -96,22 +96,16 @@ public class TaskDao {
 	 * @param timestamp
 	 * @return
 	 */
-	public int saveTaskTimekeeping(long taskId, JobPhase jobPhase, JobStatus taskStatus, long timestamp) {
+	public int saveTaskTimestamp(long taskId, JobPhase jobPhase, long loadedTime, long issuedTime, long startedTime, long finishedTime) {
 		int retValue = 0;
 		Map<String, Object> condition = new HashMap<String, Object>();
 		condition.put("taskId", taskId);
 		condition.put("jobPhase", jobPhase);
-		condition.put("taskStatus", taskStatus);
-		condition.put("timestamp", timestamp);
-		if (taskStatus.equals(JobStatus.COMMITTED)) {
-			retValue = session.insert(NAMESPACE + ".insertTaskCommittedTimestamp", condition);
-		} else if (taskStatus.equals(JobStatus.ISSUED)) {
-			retValue = session.insert(NAMESPACE + ".insertTaskIssuedTimestamp", condition);
-		} else if (taskStatus.equals(JobStatus.RUNNING)) {
-			retValue = session.insert(NAMESPACE + ".insertTaskRunningTimestamp", condition);
-		} else {
-			retValue = session.insert(NAMESPACE + ".insertTaskFinishedTimestamp", condition);
-		}
+		condition.put("loadedTime", loadedTime);
+		condition.put("issuedTime", issuedTime);
+		condition.put("startedTime", startedTime);
+		condition.put("finishedTime", finishedTime);
+		retValue = session.insert(NAMESPACE + ".insertTaskTimestamp", condition);
 		condition = null;
 		return retValue;
 	}
@@ -144,6 +138,7 @@ public class TaskDao {
 		retValue = saveTaskBasic(task);
 		retValue += saveTaskParameter(task);
 		retValue += saveTaskStatus(task);
+		retValue += saveTaskTimestamp(task.getTaskId(), task.getJobPhase(), task.getLoadedTime(), 0, 0, 0);
 		return retValue;
 	}
 
@@ -208,5 +203,25 @@ public class TaskDao {
 		condition.put("jobPhase", jobPhase);
 		task = session.selectOne(NAMESPACE + ".selectTaskByTaskIdByJobPhase", condition);
 		return task;
+	}
+
+	/**
+	 * @param taskId
+	 * @param jobPhase
+	 * @param timestamp
+	 * @return
+	 */
+	public int updateTaskTimestamp(long taskId, JobPhase jobPhase, long loadedTime, long issuedTime, long startedTime, long finishedTime) {
+		int retValue = 0;
+		Map<String, Object> condition = new HashMap<String, Object>();
+		condition.put("taskId", taskId);
+		condition.put("jobPhase", jobPhase);
+		condition.put("loadedTime", loadedTime);
+		condition.put("issuedTime", issuedTime);
+		condition.put("startedTime", startedTime);
+		condition.put("finishedTime", finishedTime);
+		retValue = session.update(NAMESPACE + ".updateTaskTimestampByTaskIdAndJobPhase", condition);
+		condition = null;
+		return retValue;
 	}
 }

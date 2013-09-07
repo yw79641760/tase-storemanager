@@ -139,11 +139,43 @@
        			#{taskStatus,	jdbcType=VARCHAR}
         )
     </insert>
+    <insert id="insertTaskTimestamp" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    	insert	into	tase_task_timestamp (
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="taskId 		!= 0">		task_id,		</if>
+    			<if test="jobPhase 		!= null">	job_phase,		</if>
+    			<if test="loadedTime 	!= 0">		loaded_time,	</if>
+    			<if test="issuedTime 	!= 0">		issued_time,	</if>
+    			<if test="startedTime 	!= 0">		started_time,	</if>
+    			<if test="finishedTime 	!= 0">		finished_time,	</if>
+    		</trim>
+    	)	values	(
+    		<trim suffix="" suffixOverrides=",">
+    			<if test="taskId 		!= 0">		#{taskId},		</if>
+    			<if test="jobPhase 		!= null">	#{jobPhase},	</if>
+    			<if test="loadedTime 	!= 0">		#{loadedTime},	</if>
+    			<if test="issuedTime 	!= 0">		#{issuedTime},	</if>
+    			<if test="startedTime 	!= 0">		#{startedTime},	</if>
+    			<if test="finishedTime 	!= 0">		#{finishedTime},</if>
+    		</trim>
+    	)
+    </insert>
     <update id="updateTaskStatusByTaskIdAndPhase" parameterType="map">
         update	tase_task_status
         set		task_status	=	#{taskStatus}
         where	task_id		=	#{taskId}
         and		job_phase	= 	#{jobPhase}
+    </update>
+    <update id="updateTaskTimestampByTaskIdAndJobPhase" parameterType="map">
+    	update	tase_task_timestamp
+    	<set>
+    		<if test="loadedTime	!= 0">loaded_time	= #{loadedTime},	</if>
+    		<if test="issuedTime 	!= 0">issued_time	= #{issuedTime},	</if>
+    		<if test="startedTime	!= 0">started_time	= #{startedTime},	</if>
+    		<if test="finishedTime	!= 0">finished_time	= #{finishedTime}	</if>
+    	</set>
+    	where	task_id		= 	#{taskId}
+    	and		job_phase	=	#{jobPhase}
     </update>
     <select id="selectTaskParameterByTaskIdAndJobPhase" parameterType="map" resultMap="jobParameterResult">
     	select	tase_task_parameter.job_phase		as	jobPhase,

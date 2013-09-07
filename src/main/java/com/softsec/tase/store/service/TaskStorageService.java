@@ -209,4 +209,27 @@ public class TaskStorageService {
 		}
 		return task;
 	}
+
+	/**
+	 * @param taskId
+	 * @param jobPhase
+	 * @param currentTimeMillis
+	 */
+	public int updateTaskTimestamp(long taskId, JobPhase jobPhase,
+			long loadedTime, long issuedTime, long startedTime, long finishedTime) throws DbUtilsException {
+		int retValue = 0;
+		SqlSession session = null;
+		try {
+			session = SQLMapperFactory.openSession();
+			TaskDao taskDao = new TaskDao(session);
+			retValue = taskDao.updateTaskTimestamp(taskId, jobPhase, loadedTime, issuedTime, startedTime, finishedTime);
+			session.commit();
+		} catch (Exception e) {
+			LOGGER.error("Failed to update task [ " + taskId + " : " + jobPhase + " ] timestamp to [ " 
+					+ loadedTime + " : " + issuedTime + " : " + startedTime + " : " + finishedTime + " ] : " + e.getMessage());
+			throw new DbUtilsException("Failed to update task [ " + taskId + " : " + jobPhase + " ] timestamp to [ " 
+					+ loadedTime + " : " + issuedTime + " : " + startedTime + " : " + finishedTime + " ] : " + e.getMessage());
+		}
+		return retValue;
+	}
 }
