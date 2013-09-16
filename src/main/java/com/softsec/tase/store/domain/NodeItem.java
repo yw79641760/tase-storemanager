@@ -70,6 +70,8 @@ public class NodeItem implements Comparable<NodeItem>{
 		this.preferredProgramTypeList = nodePayload.getPreferredProgramTypeList();
 		this.preferredProgramIdList = nodePayload.getPreferredProgramIdList();
 		
+		this.updatedTime = System.currentTimeMillis();
+		
 		getGrade(this.cpuCores,
 				this.cpuMhz,
 				this.cpuUsedPerc,
@@ -136,53 +138,40 @@ public class NodeItem implements Comparable<NodeItem>{
 	 */
 	@Override
 	public int compareTo(NodeItem nodeItem) {
+		if (nodeItem != null && nodeItem.getNodeId() != null && nodeItem.getNodeId().equals(nodeId)) {
+			return 0;
+		}
 		return Integer.valueOf(nodeItem.getGrade()).compareTo(grade);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((clusterType == null) ? 0 : clusterType.hashCode());
-		result = prime * result + cpuCores;
-		result = prime * result + cpuMhz;
-		long temp;
-		temp = Double.doubleToLongBits(cpuUsedPerc);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result
-				+ (int) (expectedDelay ^ (expectedDelay >>> 32));
-		result = prime * result + (int) (freeMem ^ (freeMem >>> 32));
-		result = prime * result + grade;
-		result = prime * result + (int) (jvmFreeMem ^ (jvmFreeMem >>> 32));
 		result = prime * result + ((nodeId == null) ? 0 : nodeId.hashCode());
-		result = prime * result
-				+ ((nodeTypeSet == null) ? 0 : nodeTypeSet.hashCode());
-		result = prime
-				* result
-				+ ((preferredProgramIdList == null) ? 0
-						: preferredProgramIdList.hashCode());
-		result = prime
-				* result
-				+ ((preferredProgramTypeList == null) ? 0
-						: preferredProgramTypeList.hashCode());
-		result = prime * result + queueLimit;
-		result = prime * result + queueNum;
-		result = prime * result + (int) (updatedTime ^ (updatedTime >>> 32));
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
 		NodeItem other = (NodeItem) obj;
 		if (nodeId == null) {
-			if (other.nodeId != null) {
+			if (other.nodeId != null)
 				return false;
-			}
-		} else if (!nodeId.equals(other.nodeId)) {
+		} else if (!nodeId.equals(other.nodeId))
 			return false;
-		}
 		return true;
 	}
 
